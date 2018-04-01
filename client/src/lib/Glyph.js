@@ -1,5 +1,5 @@
 import COLORS from './config/colors';
-import TOKEN_DESIGNS from './config/tokenDesigns';
+import GLYPH_DESIGNS from './config/glyphDesigns';
 
 class Glyph {
   constructor(color, design) {
@@ -15,7 +15,7 @@ class Glyph {
 const generateGlyphs = () => {
   const glyphs = [];
   COLORS.forEach((color) => {
-    TOKEN_DESIGNS.forEach((design) => {
+    GLYPH_DESIGNS.forEach((design) => {
       glyphs.push(new Glyph(color, design));
     });
   });

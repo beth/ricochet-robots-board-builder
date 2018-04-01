@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import { Glyph, generateGlyphs } from '../Glyph';
 import COLORS from '../config/colors';
-import DESIGNS from '../config/tokenDesigns';
+import DESIGNS from '../config/glyphDesigns';
 
 describe('Glyph', () => {
   describe('Glyph Class', () => {
