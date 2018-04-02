@@ -1,0 +1,4 @@
+:local .board {
+  display: grid;
+  grid-template-rows: repeat(16, 50px);
+}
