@@ -1,0 +1,36 @@
+:local .square {
+  border-style: solid;
+  border-color: #dfdfdf;
+  border-width: 0.5px;
+  display: grid;
+  align-content: space-around;
+  justify-content: center;
+}
+
+:local .connector {
+  background: #dfdfdf;
+}
+
+:local .top {
+  border-top-color: black;
+  border-top-width: 4px;
+  border-top-style: solid;
+}
+
+:local .bottom {
+  border-bottom-color: black;
+  border-bottom-width: 4px;
+  border-bottom-style: solid;
+}
+
+:local .left {
+  border-left-color: black;
+  border-left-width: 4px;
+  border-left-style: solid;
+}
+
+:local .right {
+  border-right-color: black;
+  border-right-width: 4px;
+  border-right-style: solid;
+}
