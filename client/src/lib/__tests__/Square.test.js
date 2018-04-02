@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import { Square, generateSquares } from '../Square';
-import SIZE from '../config/size';
+
+const SIZE = 8;
 
 describe('Square', () => {
   describe('instance', () => {
@@ -62,7 +63,7 @@ describe('Square', () => {
   });
 
   describe('generation', () => {
-    const squares = generateSquares();
+    const squares = generateSquares(SIZE);
 
     it('should have size * 2 rows and size * 2 columns', () => {
       expect(squares).to.have.lengthOf(SIZE * 2);

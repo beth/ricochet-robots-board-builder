@@ -1,5 +1,3 @@
-import SIZE from './config/size';
-
 const allowedWalls = new Set(['top', 'bottom', 'left', 'right']);
 
 class Square {
@@ -59,39 +57,39 @@ const addWalls = (squares, [rStart, rStop = rStart], [cStart, cStop = cStart], w
   }
 };
 
-const addBorderWalls = (squares) => {
-  addWalls(squares, [0], [0, (SIZE * 2) - 1], 'top');
-  addWalls(squares, [(SIZE * 2) - 1], [0, (SIZE * 2) - 1], 'bottom');
-  addWalls(squares, [0, (SIZE * 2) - 1], [0], 'left');
-  addWalls(squares, [0, (SIZE * 2) - 1], [(SIZE * 2) - 1], 'right');
+const addBorderWalls = (squares, size) => {
+  addWalls(squares, [0], [0, (size * 2) - 1], 'top');
+  addWalls(squares, [(size * 2) - 1], [0, (size * 2) - 1], 'bottom');
+  addWalls(squares, [0, (size * 2) - 1], [0], 'left');
+  addWalls(squares, [0, (size * 2) - 1], [(size * 2) - 1], 'right');
 };
 
-const addConnectorSquares = (squares) => {
-  squares[SIZE - 1][SIZE - 1].modifyWalls({ top: true, left: true });
-  squares[SIZE - 1][SIZE].modifyWalls({ top: true, right: true });
-  squares[SIZE][SIZE - 1].modifyWalls({ bottom: true, left: true });
-  squares[SIZE][SIZE].modifyWalls({ bottom: true, right: true });
-  squares[SIZE - 1][SIZE - 1].setConnector(true);
-  squares[SIZE - 1][SIZE].setConnector(true);
-  squares[SIZE][SIZE - 1].setConnector(true);
-  squares[SIZE][SIZE].setConnector(true);
+const addConnectorSquares = (squares, size) => {
+  squares[size - 1][size - 1].modifyWalls({ top: true, left: true });
+  squares[size - 1][size].modifyWalls({ top: true, right: true });
+  squares[size][size - 1].modifyWalls({ bottom: true, left: true });
+  squares[size][size].modifyWalls({ bottom: true, right: true });
+  squares[size - 1][size - 1].setConnector(true);
+  squares[size - 1][size].setConnector(true);
+  squares[size][size - 1].setConnector(true);
+  squares[size][size].setConnector(true);
 };
 
-const generateBlankSquares = () => {
+const generateBlankSquares = (size) => {
   const squares = [];
-  for (let row = 0; row < SIZE * 2; row += 1) {
+  for (let row = 0; row < size * 2; row += 1) {
     squares.push([]);
-    for (let col = 0; col < SIZE * 2; col += 1) {
+    for (let col = 0; col < size * 2; col += 1) {
       squares[row].push(new Square(row, col));
     }
   }
   return squares;
 };
 
-const generateSquares = () => {
-  const squares = generateBlankSquares();
-  addBorderWalls(squares);
-  addConnectorSquares(squares);
+const generateSquares = (size) => {
+  const squares = generateBlankSquares(size);
+  addBorderWalls(squares, size);
+  addConnectorSquares(squares, size);
   return squares;
 };
 
