@@ -11,7 +11,7 @@ describe('Square', () => {
 
     describe('properties', () => {
       it('should have a walls, glyph, and connector property', () => {
-        expect(square).to.have.keys('walls', 'glyph', 'connector');
+        expect(square).to.have.keys('row', 'col', 'walls', 'glyph', 'connector');
       });
 
       it('should have a default glyph value of null', () => {

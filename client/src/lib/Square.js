@@ -3,7 +3,9 @@ import SIZE from './config/size';
 const allowedWalls = new Set(['top', 'bottom', 'left', 'right']);
 
 class Square {
-  constructor() {
+  constructor(row, col) {
+    this.row = row;
+    this.col = col;
     this.walls = {};
     this.glyph = null;
     this.connector = null;
@@ -80,7 +82,7 @@ const generateBlankSquares = () => {
   for (let row = 0; row < SIZE * 2; row += 1) {
     squares.push([]);
     for (let col = 0; col < SIZE * 2; col += 1) {
-      squares[row].push(new Square());
+      squares[row].push(new Square(row, col));
     }
   }
   return squares;
