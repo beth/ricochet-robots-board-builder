@@ -1,0 +1,4 @@
+:local .row {
+  display: grid;
+  grid-template-columns: repeat(16, 50px);
+}

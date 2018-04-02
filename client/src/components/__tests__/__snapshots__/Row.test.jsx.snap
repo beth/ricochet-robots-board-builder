@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Row Component renders correctly 1`] = `
+<div
+  className="row"
+>
+  <div
+    className="top left square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top square"
+  />
+  <div
+    className="top right square"
+  />
+</div>
+`;
