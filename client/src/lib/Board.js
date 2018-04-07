@@ -1,70 +1,60 @@
-import { generateGlyphs } from './Glyph';
-import { generateSquares } from './Square';
-import COLORS from './config/colors';
 import GLYPH_QUADRANTS from './config/glyphQuadrants';
+import * as square from './Square';
 
-class Board {
-  constructor(size) {
-    this.size = size;
-    this.squares = generateSquares(size);
-    this.quadrants = {
-      TL: null,
-      TR: null,
-      BL: null,
-      BR: null,
-    };
-    this.remainingGlyphs = new Set(generateGlyphs());
-    this.remainingQuadrants = new Set(COLORS);
+/*
+  BOARD HELPERS
+*/
+const determineQuadrant = (size, row, col) => {
+  if (row <= size - 1 && col <= size - 1) {
+    return 'TL';
+  } else if (row <= size - 1) {
+    return 'TR';
+  } else if (col <= size - 1) {
+    return 'BL';
   }
+  return 'BR';
+};
 
-  checkBounds(row, col) {
-    if (row >= 0 && col >= 0 && row < this.size * 2 && col < this.size * 2) {
-      return true;
-    }
-    throw new Error(`row ${row} col ${col} is not in bounds for size ${this.size}`);
+const glyphAllowedInColorQuadrant = (glyph, color) => GLYPH_QUADRANTS[glyph.getName()] === color;
+
+const isConnector = (board, row, col) => Boolean(board.getIn(['squares', row, col, 'connector']));
+
+/*
+  BOARD METHODS
+*/
+const setQuadrant = (board, quadrant, color) => {
+  let newBoard = board;
+  if (!board.get('remainingColors').has(color)) {
+    return board;
   }
-
-  setQuadrant(quadrant, color) {
-    if (!this.remainingQuadrants.has(color)) {
-      return;
-    }
-    if (this.quadrants[quadrant]) {
-      this.remainingQuadrants.add(this.quadrants[quadrant]);
-    }
-    this.quadrants[quadrant] = color;
-    this.remainingQuadrants.delete(color);
+  const previousColor = board.getIn(['quadrants', quadrant]);
+  if (previousColor) {
+    newBoard = newBoard.update('remainingColors', remainingColors => remainingColors.add(previousColor));
   }
+  newBoard = newBoard.setIn(['quadrants', quadrant], color);
+  newBoard = newBoard.update('remainingColors', remainingColors => remainingColors.delete(color));
+  return newBoard;
+};
 
-  determineQuadrant(row, col) {
-    this.checkBounds(row, col);
-
-    if (row <= this.size - 1 && col <= this.size - 1) {
-      return 'TL';
-    } else if (row <= this.size - 1) {
-      return 'TR';
-    } else if (col <= this.size - 1) {
-      return 'BL';
-    }
-    return 'BR';
+const setGlyph = (board, glyph, row, col) => {
+  let newBoard = board;
+  const quadrant = determineQuadrant(board.get('size'), row, col);
+  if (!glyphAllowedInColorQuadrant(glyph, board.getIn(['quadrants', quadrant])) || isConnector(board, row, col)) {
+    return newBoard;
   }
-
-  glyphInQuadrant(glyph, row, col) {
-    const quadrant = this.determineQuadrant(row, col);
-    return GLYPH_QUADRANTS[glyph.getName()] === this.quadrants[quadrant];
+  const currentGlyph = board.getIn(['squares', row, col, 'glyph']);
+  if (currentGlyph) {
+    newBoard = newBoard.update('remainingGlyphs', remainingGlyphs => remainingGlyphs.add(currentGlyph));
   }
+  newBoard = newBoard.updateIn(['squares', row, col], squareToUpdate => square.setGlyph(squareToUpdate, glyph));
+  newBoard = newBoard.update('remainingGlyphs', remainingGlyphs => remainingGlyphs.delete(glyph));
+  return newBoard;
+};
 
-  setGlyph(glyph, row, col) {
-    if (!this.glyphInQuadrant(glyph, row, col) || this.squares[row][col].connector) {
-      return;
-    }
-
-    const square = this.squares[row][col];
-    if (square.glyph) {
-      this.remainingGlyphs.add(square.glyph);
-    }
-    square.setGlyph(glyph);
-    this.remainingGlyphs.delete(glyph);
-  }
-}
-
-export default Board;
+export {
+  determineQuadrant,
+  glyphAllowedInColorQuadrant,
+  isConnector,
+  setQuadrant,
+  setGlyph,
+};

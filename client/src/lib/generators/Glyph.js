@@ -1,5 +1,5 @@
-import COLORS from './config/colors';
-import GLYPH_DESIGNS from './config/glyphDesigns';
+import COLORS from '../config/colors';
+import GLYPH_DESIGNS from '../config/glyphDesigns';
 
 class Glyph {
   constructor(color, design) {
@@ -23,7 +23,5 @@ const generateGlyphs = () => {
   return glyphs;
 };
 
-export {
-  Glyph,
-  generateGlyphs,
-};
+export default generateGlyphs;
+

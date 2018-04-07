@@ -1,156 +1,137 @@
 import { expect } from 'chai';
-import Board from '../Board';
-import SIZE from '../config/size';
+import generateBoard from '../generators/Board';
+import {
+  determineQuadrant,
+  glyphAllowedInColorQuadrant,
+  isConnector,
+  setQuadrant,
+  setGlyph,
+} from '../Board';
+
+const SIZE = 8;
 
 describe('Board', () => {
-  describe('instance', () => {
-    let board;
-    beforeEach(() => {
-      board = new Board(SIZE);
+  let board;
+  beforeEach(() => {
+    board = generateBoard(SIZE);
+  });
+
+  describe('determineQuadrant', () => {
+    it('should return TL for anywhere in TL', () => {
+      expect(determineQuadrant(SIZE, 0, 0)).to.equal('TL');
+      expect(determineQuadrant(SIZE, SIZE - 1, 0)).to.equal('TL');
+      expect(determineQuadrant(SIZE, 0, SIZE - 1)).to.equal('TL');
+      expect(determineQuadrant(SIZE, SIZE - 1, SIZE - 1)).to.equal('TL');
     });
 
-    describe('properties', () => {
-      it('should have a walls, glyph, and connector property', () => {
-        expect(board).to.have.keys('size', 'squares', 'quadrants', 'remainingGlyphs', 'remainingQuadrants');
-      });
-
-      it('should have default quadrant values of null', () => {
-        expect(board.quadrants).to.deep.equal({
-          TL: null,
-          TR: null,
-          BL: null,
-          BR: null,
-        });
-      });
+    it('should return BL for anywhere in BL', () => {
+      expect(determineQuadrant(SIZE, SIZE, 0)).to.equal('BL');
+      expect(determineQuadrant(SIZE, (SIZE * 2) - 1, SIZE - 1)).to.equal('BL');
+      expect(determineQuadrant(SIZE, SIZE, 0)).to.equal('BL');
+      expect(determineQuadrant(SIZE, (SIZE * 2) - 1, SIZE - 1)).to.equal('BL');
     });
 
-    describe('#checkBounds', () => {
-      it('not throw if row, col are in bounds', () => {
-        const inBounds = () => board.checkBounds(SIZE, SIZE);
-        expect(inBounds).to.not.throw();
-      });
-
-      it('should throw if row is not in bounds', () => {
-        const notInBounds = () => board.checkBounds(SIZE * 2, SIZE);
-        expect(notInBounds).to.throw();
-      });
-
-      it('should throw if col is not in bounds', () => {
-        const notInBounds = () => board.checkBounds(SIZE, SIZE * 2);
-        expect(notInBounds).to.throw();
-      });
+    it('should return BR for anywhere in BR', () => {
+      expect(determineQuadrant(SIZE, SIZE, SIZE)).to.equal('BR');
+      expect(determineQuadrant(SIZE, (SIZE * 2) - 1, SIZE)).to.equal('BR');
+      expect(determineQuadrant(SIZE, SIZE, (SIZE * 2) - 1)).to.equal('BR');
+      expect(determineQuadrant(SIZE, (SIZE * 2) - 1, (SIZE * 2) - 1)).to.equal('BR');
     });
 
-    describe('#setQuadrant', () => {
-      it('should set a new quadrant', () => {
-        board.setQuadrant('TL', 'RED');
-        expect(board.quadrants.TL).to.equal('RED');
-      });
+    it('should return TR for anywhere in TR', () => {
+      expect(determineQuadrant(SIZE, 0, SIZE)).to.equal('TR');
+      expect(determineQuadrant(SIZE, SIZE - 1, SIZE)).to.equal('TR');
+      expect(determineQuadrant(SIZE, 0, (SIZE * 2) - 1)).to.equal('TR');
+      expect(determineQuadrant(SIZE, SIZE - 1, (SIZE * 2) - 1)).to.equal('TR');
+    });
+  });
 
-      it('should remove the quadrant from remainingQuadrants', () => {
-        board.setQuadrant('BL', 'RED');
-        expect(board.remainingQuadrants.has('RED')).to.equal(false);
-      });
-
-
-      it('should add the existing quadrant color to remainingQuadrants', () => {
-        board.setQuadrant('TL', 'RED');
-        board.setQuadrant('TL', 'GREEN');
-        expect(board.remainingQuadrants.has('RED')).to.equal(true);
-        expect(board.remainingQuadrants.has('GREEN')).to.equal(false);
-      });
-
-      it('should not set a color that is somewhere else', () => {
-        board.setQuadrant('TL', 'RED');
-        board.setQuadrant('BL', 'RED');
-        expect(board.quadrants.BL).to.equal(null);
-      });
+  describe('glyphAllowedInColorQuadrant', () => {
+    it('should return true if glyph is in quadrant', () => {
+      const glyph = board.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      expect(glyphAllowedInColorQuadrant(glyph, 'GREEN')).to.equal(true);
     });
 
-    describe('#determineQuadrant', () => {
-      it('should return TL for anywhere in TL', () => {
-        expect(board.determineQuadrant(0, 0)).to.equal('TL');
-        expect(board.determineQuadrant(SIZE - 1, 0)).to.equal('TL');
-        expect(board.determineQuadrant(0, SIZE - 1)).to.equal('TL');
-        expect(board.determineQuadrant(SIZE - 1, SIZE - 1)).to.equal('TL');
-      });
+    it('should return false if glyph is not in quadrant', () => {
+      const glyph = board.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      expect(glyphAllowedInColorQuadrant(glyph, 'RED')).to.equal(false);
+    });
+  });
 
-      it('should return BL for anywhere in BL', () => {
-        expect(board.determineQuadrant(SIZE, 0)).to.equal('BL');
-        expect(board.determineQuadrant((SIZE * 2) - 1, SIZE - 1)).to.equal('BL');
-        expect(board.determineQuadrant(SIZE, 0)).to.equal('BL');
-        expect(board.determineQuadrant((SIZE * 2) - 1, SIZE - 1)).to.equal('BL');
-      });
-
-      it('should return BR for anywhere in BR', () => {
-        expect(board.determineQuadrant(SIZE, SIZE)).to.equal('BR');
-        expect(board.determineQuadrant((SIZE * 2) - 1, SIZE)).to.equal('BR');
-        expect(board.determineQuadrant(SIZE, (SIZE * 2) - 1)).to.equal('BR');
-        expect(board.determineQuadrant((SIZE * 2) - 1, (SIZE * 2) - 1)).to.equal('BR');
-      });
-
-      it('should return TR for anywhere in TR', () => {
-        expect(board.determineQuadrant(0, SIZE)).to.equal('TR');
-        expect(board.determineQuadrant(SIZE - 1, SIZE)).to.equal('TR');
-        expect(board.determineQuadrant(0, (SIZE * 2) - 1)).to.equal('TR');
-        expect(board.determineQuadrant(SIZE - 1, (SIZE * 2) - 1)).to.equal('TR');
-      });
+  describe('isConnector', () => {
+    it('should return true for connector row, col', () => {
+      expect(isConnector(board, SIZE, SIZE)).to.equal(true);
     });
 
-    describe('#glyphInQuadrant', () => {
-      it('should return true if glyph is in quadrant', () => {
-        board.setQuadrant('BL', 'GREEN');
-        const glyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        expect(board.glyphInQuadrant(glyph, SIZE, 0)).to.equal(true);
-      });
+    it('should return false for non-connector row, col', () => {
+      expect(isConnector(board, SIZE + 1, SIZE)).to.equal(false);
+    });
+  });
 
-      it('should return false if glyph is not in quadrant', () => {
-        board.setQuadrant('BL', 'RED');
-        const glyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        expect(board.glyphInQuadrant(glyph, SIZE, 0)).to.equal(false);
-      });
+  describe('setQuadrant', () => {
+    it('should set a new quadrant', () => {
+      const newBoard = setQuadrant(board, 'TL', 'RED');
+      expect(newBoard.toJS().quadrants.TL).to.equal('RED');
     });
 
-    describe('#setGlyph', () => {
-      it('should set the glyph', () => {
-        board.setQuadrant('BL', 'GREEN');
-        const glyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        board.setGlyph(glyph, SIZE, 0);
-        expect(board.squares[SIZE][0].glyph).to.equal(glyph);
-      });
+    it('should remove the quadrant from remainingColors', () => {
+      const newBoard = setQuadrant(board, 'BL', 'RED');
+      expect(newBoard.get('remainingColors').has('RED')).to.equal(false);
+    });
 
-      it('should not set the glyph on a connector square', () => {
-        board.setQuadrant('BL', 'GREEN');
-        const glyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        board.setGlyph(glyph, SIZE, SIZE - 1);
-        expect(board.squares[SIZE][0].glyph).to.equal(null);
-      });
 
-      it('should remove the glyph from remaining glyphs after setting the glyph', () => {
-        board.setQuadrant('BL', 'GREEN');
-        const glyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        board.setGlyph(glyph, SIZE, 0);
-        expect(board.remainingGlyphs.has(glyph)).to.equal(false);
-      });
+    it('should add the existing quadrant color to remainingColors', () => {
+      let newBoard = setQuadrant(board, 'TL', 'RED');
+      newBoard = setQuadrant(newBoard, 'TL', 'GREEN');
+      expect(newBoard.get('remainingColors').has('RED')).to.equal(true);
+      expect(newBoard.get('remainingColors').has('GREEN')).to.equal(false);
+    });
 
-      it('should remove the glyph from remaining glyphs if it does not set the glyph', () => {
-        board.setQuadrant('BL', 'GREEN');
-        const glyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        board.setGlyph(glyph, SIZE, SIZE - 1);
-        expect(board.squares[SIZE][0].glyph).to.equal(null);
-        expect(board.remainingGlyphs.has(glyph)).to.equal(true);
-      });
+    it('should not set a color that is somewhere else', () => {
+      let newBoard = setQuadrant(board, 'TL', 'RED');
+      newBoard = setQuadrant(newBoard, 'BL', 'RED');
+      expect(newBoard.getIn(['quadrants', 'BL'])).to.equal(null);
+    });
+  });
 
-      it('should add an existing glyph back to the remaining glyphs if one is already present', () => {
-        board.setQuadrant('BL', 'GREEN');
-        const planetBlueGlyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'PLANET-BLUE');
-        const diamondYellowGlyph = Array.from(board.remainingGlyphs).find(g => g.getName() === 'DIAMOND-YELLOW');
-        board.setGlyph(planetBlueGlyph, SIZE, 0);
-        board.setGlyph(diamondYellowGlyph, SIZE, 0);
-        expect(board.squares[SIZE][0].glyph).to.equal(diamondYellowGlyph);
-        expect(board.remainingGlyphs.has(planetBlueGlyph)).to.equal(true);
-      });
+  describe('setGlyph', () => {
+    it('should set the glyph', () => {
+      let newBoard = setQuadrant(board, 'BL', 'GREEN');
+      const glyph = newBoard.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      newBoard = setGlyph(newBoard, glyph, SIZE, 0);
+      expect(newBoard.getIn(['squares', SIZE, 0, 'glyph'])).to.equal(glyph);
+    });
+
+    it('should not set the glyph on a connector square', () => {
+      let newBoard = setQuadrant(board, 'BL', 'GREEN');
+      const glyph = newBoard.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      newBoard = setGlyph(newBoard, glyph, SIZE, SIZE - 1);
+      expect(newBoard.getIn(['squares', SIZE, 0, 'glyph'])).to.equal(null);
+    });
+
+    it('should remove the glyph from remaining glyphs after setting the glyph', () => {
+      let newBoard = setQuadrant(board, 'BL', 'GREEN');
+      const glyph = newBoard.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      newBoard = setGlyph(newBoard, glyph, SIZE, 0);
+      expect(newBoard.get('remainingGlyphs').has(glyph)).to.equal(false);
+    });
+
+    it('should remove the glyph from remaining glyphs if it does not set the glyph', () => {
+      let newBoard = setQuadrant(board, 'BL', 'GREEN');
+      const glyph = newBoard.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      newBoard = setGlyph(newBoard, glyph, SIZE, SIZE - 1);
+      expect(newBoard.getIn(['squares', SIZE, 0, 'glyph'])).to.equal(null);
+      expect(newBoard.get('remainingGlyphs').has(glyph)).to.equal(true);
+    });
+
+    it('should add an existing glyph back to the remaining glyphs if one is already present', () => {
+      let newBoard = setQuadrant(board, 'BL', 'GREEN');
+      const planetBlueGlyph = newBoard.get('remainingGlyphs').toJS().find(g => g.getName() === 'PLANET-BLUE');
+      const diamondYellowGlyph = newBoard.get('remainingGlyphs').toJS().find(g => g.getName() === 'DIAMOND-YELLOW');
+      newBoard = setGlyph(newBoard, planetBlueGlyph, SIZE, 0);
+      newBoard = setGlyph(newBoard, diamondYellowGlyph, SIZE, 0);
+      expect(newBoard.getIn(['squares', SIZE, 0, 'glyph'])).to.equal(diamondYellowGlyph);
+      expect(newBoard.get('remainingGlyphs').has(planetBlueGlyph)).to.equal(true);
     });
   });
 });
-
