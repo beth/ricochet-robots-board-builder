@@ -1,12 +1,12 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 import Board from '../Board';
-import BoardConstructor from '../../lib/Board';
+
+jest.mock('../../containers/SquareContainer', () => 'SquareContainer');
 
 describe('Board Component', () => {
   it('renders correctly', () => {
-    const board = new BoardConstructor(8);
-    const domTree = renderer.create(<Board squares={board.squares} />).toJSON();
+    const domTree = renderer.create(<Board size={8} />).toJSON();
     expect(domTree).toMatchSnapshot();
   });
 });

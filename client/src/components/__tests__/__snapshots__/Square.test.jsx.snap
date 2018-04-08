@@ -3,11 +3,19 @@
 exports[`Square Component renders correctly 1`] = `
 <div
   className="square"
-/>
+>
+  <div
+    onClick={[Function]}
+  />
+</div>
 `;
 
 exports[`Square Component renders correctly when walls are present 1`] = `
 <div
   className="top bottom square"
-/>
+>
+  <div
+    onClick={[Function]}
+  />
+</div>
 `;
