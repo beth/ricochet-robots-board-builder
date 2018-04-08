@@ -12,11 +12,19 @@ const classes = (square) => {
 };
 
 const Square = props => (
-  <div className={classes(props.square)} />
+  <div className={classes(props.square)} onClick={() => props.setQuadrant(props.row, props.col)} >
+  </div>
 );
 
 Square.propTypes = {
-  square: PropTypes.shape({ walls: PropTypes.object }).isRequired,
+  row: PropTypes.number.isRequired,
+  col: PropTypes.number.isRequired,
+  square: PropTypes.shape({
+    walls: PropTypes.object,
+    row: PropTypes.number,
+    col: PropTypes.number,
+  }).isRequired,
+  setQuadrant: PropTypes.func,
 };
 
 export default Square;

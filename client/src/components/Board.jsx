@@ -1,16 +1,22 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Row from './Row';
+import SquareContainer from '../containers/SquareContainer';
 import styles from '../styles/Board.css';
+
+const key = (row, col) => `${row}-${col}`;
 
 const Board = props => (
   <div className={styles.board}>
-    {props.squares.map(row => <Row squares={row} key={row[0].row} />)}
+    {
+      Array(props.size * 2).fill(0).map((n, row) =>
+        Array(props.size * 2).fill(0).map((m, col) =>
+          <SquareContainer row={row} col={col} key={key(row, col)} />))
+    }
   </div>
 );
 
 Board.propTypes = {
-  squares: PropTypes.arrayOf(PropTypes.array).isRequired,
+  size: PropTypes.number.isRequired,
 };
 
 export default Board;
