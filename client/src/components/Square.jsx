@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import ConnectorContainer from '../containers/ConnectorContainer';
 import styles from '../styles/Square.css';
 
 const classes = (square) => {
@@ -11,8 +12,13 @@ const classes = (square) => {
   return classNames.join(' ');
 };
 
-const Square = props => (
-  <div className={classes(props.square)} onClick={() => props.setQuadrant(props.row, props.col)} >
+const Square = ({ row, col, square }) => (
+  <div className={classes(square)} >
+    {
+      square.connector ?
+        <ConnectorContainer row={row} col={col} /> :
+        null
+    }
   </div>
 );
 
@@ -21,10 +27,8 @@ Square.propTypes = {
   col: PropTypes.number.isRequired,
   square: PropTypes.shape({
     walls: PropTypes.object,
-    row: PropTypes.number,
-    col: PropTypes.number,
+    connector: PropTypes.bool,
   }).isRequired,
-  setQuadrant: PropTypes.func,
 };
 
 export default Square;
