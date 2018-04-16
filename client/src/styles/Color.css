@@ -1,0 +1,22 @@
+:local .color {
+  height: 22px;
+  width: 22px;
+  display: grid;
+  margin: auto;
+}
+
+:local .red {
+  background-color: red;
+}
+
+:local .blue {
+  background-color: blue;
+}
+
+:local .yellow {
+  background-color: yellow;
+}
+
+:local .green {
+  background-color: green;
+}
