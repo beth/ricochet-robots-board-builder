@@ -1,0 +1,21 @@
+:local .set-connector {
+  height: 10px;
+  width: 10px;
+  margin: auto;
+}
+
+:local .red {
+  background-color: red;
+}
+
+:local .blue {
+  background-color: blue;
+}
+
+:local .yellow {
+  background-color: yellow;
+}
+
+:local .green {
+  background-color: green;
+}
