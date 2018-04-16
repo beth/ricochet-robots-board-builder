@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Connector Component renders a ColorsContainers component when given an empty string 1`] = `
+<ColorsContainer
+  col={8}
+  row={8}
+/>
+`;
+
+exports[`Connector Component renders a plain div when given a valid color 1`] = `
+<div
+  className="set-connector red"
+/>
+`;
