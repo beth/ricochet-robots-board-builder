@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Color Component renders correctly when given color 1`] = `
+<div
+  className="color blue"
+  onClick={[Function]}
+/>
+`;
+
+exports[`Color Component renders correctly when not given color 1`] = `
+<div
+  className="color "
+  onClick={[Function]}
+/>
+`;

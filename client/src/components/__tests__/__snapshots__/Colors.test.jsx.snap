@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Colors Component renders four ColorContainers when given four colors 1`] = `
+<div
+  className="colors"
+>
+  <ColorContainer
+    col={8}
+    color="RED"
+    row={8}
+  />
+  <ColorContainer
+    col={8}
+    color="BLUE"
+    row={8}
+  />
+  <ColorContainer
+    col={8}
+    color="YELLOW"
+    row={8}
+  />
+  <ColorContainer
+    col={8}
+    color="GREEN"
+    row={8}
+  />
+</div>
+`;
+
+exports[`Colors Component renders two ColorContainers when given two colors 1`] = `
+<div
+  className="colors"
+>
+  <ColorContainer
+    col={8}
+    color="RED"
+    row={8}
+  />
+  <ColorContainer
+    col={8}
+    color="GREEN"
+    row={8}
+  />
+</div>
+`;
