@@ -19,6 +19,8 @@ const glyphAllowedInColorQuadrant = (glyph, color) => GLYPH_QUADRANTS[glyph.getN
 
 const isConnector = (board, row, col) => Boolean(board.getIn(['squares', row, col, 'connector']));
 
+const remainingQuadrant = board => board.get('quadrants').reduce((memo, color, quadrant) => (color ? memo : quadrant), null);
+
 /*
   BOARD METHODS
 */
@@ -33,6 +35,9 @@ const setQuadrant = (board, quadrant, color) => {
   }
   newBoard = newBoard.setIn(['quadrants', quadrant], color);
   newBoard = newBoard.update('remainingColors', remainingColors => remainingColors.delete(color));
+  if (newBoard.get('remainingColors').size === 1) {
+    newBoard = setQuadrant(newBoard, remainingQuadrant(newBoard), newBoard.get('remainingColors').first());
+  }
   return newBoard;
 };
 
@@ -55,6 +60,7 @@ export {
   determineQuadrant,
   glyphAllowedInColorQuadrant,
   isConnector,
+  remainingQuadrant,
   setQuadrant,
   setGlyph,
 };

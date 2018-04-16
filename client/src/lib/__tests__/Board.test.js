@@ -1,9 +1,11 @@
 import { expect } from 'chai';
+import { fromJS } from 'immutable';
 import generateBoard from '../generators/Board';
 import {
   determineQuadrant,
   glyphAllowedInColorQuadrant,
   isConnector,
+  remainingQuadrant,
   setQuadrant,
   setGlyph,
 } from '../Board';
@@ -68,6 +70,20 @@ describe('Board', () => {
     });
   });
 
+  describe('remainingQuadrant', () => {
+    it('should find the only non-set quadrant', () => {
+      const newBoard = fromJS({
+        quadrants: {
+          TL: 'RED',
+          TR: 'BLUE',
+          BL: null,
+          BR: 'YELLOW',
+        },
+      });
+      expect(remainingQuadrant(newBoard)).to.equal('BL');
+    });
+  });
+
   describe('setQuadrant', () => {
     it('should set a new quadrant', () => {
       const newBoard = setQuadrant(board, 'TL', 'RED');
@@ -78,7 +94,6 @@ describe('Board', () => {
       const newBoard = setQuadrant(board, 'BL', 'RED');
       expect(newBoard.get('remainingColors').has('RED')).to.equal(false);
     });
-
 
     it('should add the existing quadrant color to remainingColors', () => {
       let newBoard = setQuadrant(board, 'TL', 'RED');
@@ -91,6 +106,13 @@ describe('Board', () => {
       let newBoard = setQuadrant(board, 'TL', 'RED');
       newBoard = setQuadrant(newBoard, 'BL', 'RED');
       expect(newBoard.getIn(['quadrants', 'BL'])).to.equal(null);
+    });
+
+    it('should set the remaining quadrant if the second to last quadrant is set', () => {
+      let newBoard = setQuadrant(board, 'TL', 'RED');
+      newBoard = setQuadrant(newBoard, 'TR', 'YELLOW');
+      newBoard = setQuadrant(newBoard, 'BL', 'GREEN');
+      expect(newBoard.getIn(['quadrants', 'BR'])).to.equal('BLUE');
     });
   });
 
